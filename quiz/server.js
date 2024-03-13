@@ -37,6 +37,26 @@ app.get('/read/usernames', (req, res) => {
   res.send(usernames);
 });
 
+app.use('/read/username', addMsgToRequest);
+
+app.get('/read/username/:name', (req, res) => {
+  let username = req.params.name;
+  let users = req.users.filter(function(user) {
+    return user.username === username;
+  });
+
+  if (users.length > 0) {
+    let emails = users.map((user) => {
+      return {id: user.id, email: user.email}
+    });
+    res.send(emails);
+  } else {
+    return res.json({
+      error: {message: `user ${username} not found`, status: 404}
+  });
+  }
+})
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/write/adduser', addMsgToRequest);
